@@ -11,8 +11,11 @@ all have same password: 12345
 Following tables are used:
 
 users: to store users after signing up
+
 feeds: to store feeds
+
 relations: to track who is friend with whom
+
 messages: to track sender, receiver and messages exchanged
 
 Please use DB Browser for SQLite if you want to manupulate these table data as there are limited options in the front side to do so. Feel free to download and add anything if you want to.
