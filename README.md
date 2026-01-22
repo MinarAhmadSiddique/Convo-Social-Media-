@@ -1,5 +1,5 @@
 After signing in, There are Profile, Feeds, Discover, Friends and Message tabs. In Feeds we can make posts and see what our friends have posted. 
-We can discover people and sent friend request. After accepting requests, all friends appear in friends tab. We can also message friends.
+We can discover people and send friend request. After accepting requests, all friends appear in friends tab. We can also message friends.
 
 There are three users already been added.
 user1: minar
