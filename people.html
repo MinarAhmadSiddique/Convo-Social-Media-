@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Welcome to Convo</title>
+    </head>
+    <style>
+       .tabs {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 12px 20px;
+    border-bottom: 1px solid #ddd;
+    font-family: Arial, sans-serif;
+}
+
+.tabs a {
+    text-decoration: none;
+    color: #555;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 6px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.tabs a:hover {
+    background-color: #4a90e2;
+    color: #ffffff;
+}
+
+.tabs a:active {
+    background-color: #357abd;
+    color: #ffffff;
+}
+
+    </style>
+    <body>
+        <div class="tabs" >
+            <a href="profile.html">Profile</a>
+            <a href="posts.html">Feeds</a>
+            <a href="people.html">Discover</a>
+            <a href="friends.html">Friends</a>
+            <a href="message.html">Message</a>
+        </div>
+
+        <h3>People you may know</h3>
+        <div id="usersContainer"></div>
+
+        <script>
+           async function loadUsers(){
+            const container=document.getElementById("usersContainer");
+            container.innerHTML="";
+
+           try{
+            const res =await fetch("/api/users");
+            const users =await res.json();
+
+           users.forEach(u =>{
+            const div=document.createElement("div");
+            div.style.border="1px solid #ccc";
+            div.style.padding="8px";
+            div.style.margin="8px 0";
+            div.style.borderRadius="6px";
+            div.style.display="flex";
+            div.style.justifyContent="space-between";
+            div.style.alignItems="center";
+
+            div.innerHTML=`
+            <span>Hi, My name is ${u.username}. Add me to your network. My contact info: '${u.email}'</span>
+            <button onclick="addFriend(${u.id},'${u.username}')">Add Friend</button>
+            `;
+
+            container.appendChild(div);
+           }
+           );
+           }catch(e){
+            console.error(e);
+           }
+        }
+
+        async function addFriend(targetId,targetName){
+            try{
+                const res=await fetch("/api/add-friend",{
+                    method:"POST",
+                    headers:{"Content-Type":"application/json"},
+                    body:JSON.stringify({targetId,targetName})
+                });
+
+                const data=await res.json();
+
+                if(data.success){
+                    alert(`Friend requist sent to ${targetName}`);
+                    loadUsers();
+                }else{
+                    alert(data.error);
+                }
+            }catch(e){
+                console.error(e);
+            }
+        }
+        loadUsers();
+        </script>
+    </body>
+</html>

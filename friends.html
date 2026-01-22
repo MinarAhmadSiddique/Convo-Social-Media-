@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Welcome to Convo</title>
+    </head>
+    <style>
+       .tabs {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 12px 20px;
+    border-bottom: 1px solid #ddd;
+    font-family: Arial, sans-serif;
+}
+
+.tabs a {
+    text-decoration: none;
+    color: #555;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 6px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.tabs a:hover {
+    background-color: #4a90e2;
+    color: #ffffff;
+}
+
+.tabs a:active {
+    background-color: #357abd;
+    color: #ffffff;
+}
+
+    </style>
+    <body>
+        <div class="tabs" >
+            <a href="profile.html">Profile</a>
+            <a href="posts.html">Feeds</a>
+            <a href="people.html">Discover</a>
+            <a href="friends.html">Friends</a>
+            <a href="message.html">Message</a>
+        </div>
+
+
+        <div id="friendRequest"></div>
+
+        <h3>Your Friends Checklists</h3>
+
+        <div id="friends"></div>
+
+        <script>
+
+            async function acceptFriends(){
+            const container=document.getElementById("friendRequest");
+            container.innerHTML="";
+
+            try{
+                const res=await fetch("/api/friendRequest");
+                const people=await res.json();
+
+                people.forEach(u=>
+                    {
+                        const div=document.createElement("div");
+                         div.style.border="1px solid #ccc";
+            div.style.padding="8px";
+            div.style.margin="8px 0";
+            div.style.borderRadius="6px";
+            div.style.display="flex";
+            div.style.justifyContent="space-between";
+            div.style.alignItems="center";
+
+            div.innerHTML=`
+            <span>Hi, My name is '${u.username}'. Let's be friends.</span>
+            <button onclick="acceptRequest(${u.userid},'${u.username}',${u.targetid})">Add to Network</button>
+            `;
+            container.appendChild(div);
+                    }
+                );
+            }catch(e){
+                console.error(e);
+            }
+            }
+
+            async function acceptRequest(userid,username,targetid){
+
+                const res=await fetch("/api/accept",{
+                    method:"POST",
+                    headers:{"Content-Type":"application/json"},
+                    body:JSON.stringify({userid,targetid})
+                });
+
+                const data=await res.json();
+
+                if(data.success){
+                    alert(`You and ${username} are now friends`);
+                    window.location.reload();
+                }else{
+                    alert(data.error);
+                }
+
+            }
+
+            acceptFriends();
+
+            async function friends(){
+                const container=document.getElementById("friends");
+                container.innerHTML="";
+try{
+                const res=await fetch("/api/friends");
+                const friends=await res.json();
+
+                friends.forEach(u=>{
+                     const div=document.createElement("div");
+                         div.style.border="1px solid #ccc";
+            div.style.padding="8px";
+            div.style.margin="8px 0";
+            div.style.borderRadius="6px";
+            div.style.display="flex";
+            div.style.justifyContent="space-between";
+            div.style.alignItems="center";
+
+        fetch("/api/user")
+            .then(res=>res.json())
+            .then(user=>{
+                if(user.username===u.username){
+             div.innerHTML=`
+            <span>You are friends with '${u.targetname}'.</span>
+            `;
+                }else if(user.username===u.targetname){
+                    div.innerHTML=`
+            <span>You are friends with '${u.username}'.</span>
+            `;
+                }
+            })
+            .catch(err=>console.error(err));
+            
+
+            container.appendChild(div);
+                });
+            }catch(e){
+                console.error(e);
+            }
+            }
+            friends();
+        </script>
+    </body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Welcome to Convo</title>
+    </head>
+    <style>
+       .tabs {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 12px 20px;
+    border-bottom: 1px solid #ddd;
+    font-family: Arial, sans-serif;
+}
+
+.tabs a {
+    text-decoration: none;
+    color: #555;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 6px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.tabs a:hover {
+    background-color: #4a90e2;
+    color: #ffffff;
+}
+
+.tabs a:active {
+    background-color: #357abd;
+    color: #ffffff;
+}
+   h3 {
+        text-align: center;
+        color: #333;
+        font-size: 28px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    h4 {
+        text-align: center;
+        color: #555;
+        font-size: 20px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        font-weight: 500;
+    }
+ a#logout {
+    display: block; 
+    width: fit-content;      
+    margin: 20px auto;       
+    text-decoration: none;
+    background-color: #e74c3c;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    text-align: center;      
+    transition: background-color 0.3s;
+}
+
+a#logout:hover {
+    background-color: #c0392b;
+}
+    </style>
+    <body>
+        <div class="tabs" >
+            <a href="profile.html">Profile</a>
+            <a href="posts.html">Feeds</a>
+            <a href="people.html">Discover</a>
+            <a href="friends.html">Friends</a>
+            <a href="message.html">Message</a>
+        </div>
+        <h3 style="text-align: center;">Welcome to Convo. This is your profile. Have fun.</h3>
+
+    <h4 id="name"></h4>
+    <h4 id="email"></h4>
+    <h4 id="id"></h4>
+        <a href="logout" id="logout">Sign Out</a>
+
+        <script>
+            fetch("/api/user")
+            .then(res=>res.json())
+            .then(user=>{
+                document.getElementById("name").textContent=`My Name: ${user.username}`;
+                document.getElementById("email").textContent=`Contact Me at ${user.email}`;
+                document.getElementById('id').textContent=`My User ID: ${user.id}`;
+            })
+        </script>
+    </body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Welcome to Convo</title>
+    </head>
+    <style>
+       .tabs {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 12px 20px;
+    border-bottom: 1px solid #ddd;
+    font-family: Arial, sans-serif;
+}
+
+.tabs a {
+    text-decoration: none;
+    color: #555;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 6px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.tabs a:hover {
+    background-color: #4a90e2;
+    color: #ffffff;
+}
+
+.tabs a:active {
+    background-color: #357abd;
+    color: #ffffff;
+}
+    #statusForm {
+        width: 50%;
+        margin: 30px auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+  
+    #statusForm label {
+        font-weight: bold;
+        margin-bottom: 8px;
+        font-size: 16px;
+        align-self: flex-start;
+    }
+
+   
+    #statusForm textarea {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        resize: none;
+        margin-bottom: 15px;
+        font-size: 14px;
+        font-family: Arial, sans-serif;
+    }
+
+    
+    #statusForm button {
+        padding: 10px 20px;
+        background-color: #4a90e2;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    #statusForm button:hover {
+        background-color: #357abd;
+    }
+
+    </style>
+    <body>
+        <div class="tabs" >
+            <a href="profile.html">Profile</a>
+            <a href="posts.html">Feeds</a>
+            <a href="people.html">Discover</a>
+            <a href="friends.html">Friends</a>
+            <a href="message.html">Message</a>
+        </div>
+
+<form action="/auth/post" method="POST" id="statusForm">
+    <label for="status">What's on your mind?</label>
+    <textarea id="status" name="feed" cols="50" rows="8" maxlength="500" placeholder="Write Something..."></textarea>
+    <button type="submit">Post</button>
+</form>
+
+<h3>People started sharing. Join them and spread yours.</h3>
+
+<div id="container"></div>
+
+<script>
+    async function Feeds(){
+        const container=document.getElementById("container");
+        container.innerHTML="";
+
+        try{
+        const res=await fetch("/api/feeds");
+        const feeds=await res.json();
+
+        feeds.forEach(f=>{
+            const div=document.createElement("div");
+            div.style.border = "1px solid #ccc";
+            div.style.padding = "8px";
+            div.style.margin = "8px 0";
+            div.style.borderRadius = "6px";
+
+            div.innerHTML=`<strong>${f.username}: </strong>${f.feed}`;
+            container.appendChild(div);
+        });
+
+        if(feeds.length===0){
+            container.innerHTML="<p>No Posts Yet. Make one.</p>";
+        }
+    }catch(e){
+        console.error(e);
+    }
+    }
+    Feeds();
+</script>
+    </body>
+</html>

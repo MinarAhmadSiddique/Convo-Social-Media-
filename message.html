@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Welcome to Convo</title>
+    </head>
+    <style>
+       .tabs {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 12px 20px;
+    border-bottom: 1px solid #ddd;
+    font-family: Arial, sans-serif;
+}
+
+.tabs a {
+    text-decoration: none;
+    color: #555;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 6px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.tabs a:hover {
+    background-color: #4a90e2;
+    color: #ffffff;
+}
+
+.tabs a:active {
+    background-color: #357abd;
+    color: #ffffff;
+}
+
+    </style>
+    <body>
+        <div class="tabs" >
+            <a href="profile.html">Profile</a>
+            <a href="posts.html">Feeds</a>
+            <a href="people.html">Discover</a>
+            <a href="friends.html">Friends</a>
+            <a href="message.html">Message</a>
+        </div>
+
+
+        <div id="container"></div>
+
+        <script>
+          
+               async function friends(){
+                const container=document.getElementById("container");
+                container.innerHTML="";
+try{
+                const res=await fetch("/api/friends");
+                const friends=await res.json();
+
+                friends.forEach(u=>{
+                     const div=document.createElement("div");
+                         div.style.border="1px solid #ccc";
+            div.style.padding="8px";
+            div.style.margin="8px 0";
+            div.style.borderRadius="6px";
+            div.style.display="flex";
+            div.style.justifyContent="space-between";
+            div.style.alignItems="center";
+
+        fetch("/api/user")
+            .then(res=>res.json())
+            .then(user=>{
+                if(user.username===u.username){
+             div.innerHTML=`
+            <span>'${u.targetname}' is your friend.</span>
+            <button onclick="Message('${u.targetname}')">Message</button>
+            `;
+                }else if(user.username===u.targetname){
+                    div.innerHTML=`
+            <span>'${u.username}' is your friend.</span>
+            <button onclick="Message('${u.username}')">Message</button>
+            `;
+                }
+            })
+            .catch(err=>console.error(err));
+            
+
+            container.appendChild(div);
+                });
+            }catch(e){
+                console.error(e);
+            }
+            }
+            friends();
+
+            async function Message(receiver){
+
+  const container = document.getElementById("container");
+  container.innerHTML = "";
+
+  container.innerHTML = `
+    <div id="conversations"></div>
+    <div style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);color:white;padding:20px;border-radius:50px;">
+    <textarea id="msg" cols="40" rows="6"></textarea>
+    <button onclick="sendMessage('${receiver}')">Send</button>
+    </div>
+  `;
+
+  getMess(receiver);
+            }
+
+            async function sendMessage(rec){
+                const message=document.getElementById("msg").value;
+                const conversations=document.getElementById("conversations");
+                const receiver=rec;
+
+                const res=await fetch("/api/message",{
+                    method:"POST",
+                    headers:{"Content-Type":"application/json"},
+                    body:JSON.stringify({receiver,message})
+                });
+
+                  const data=await res.json();
+
+                if(data.success){
+                
+                }else{
+                    alert(data.error);
+                }
+
+                getMess(rec);
+
+            }
+
+            async function getMess(rec) {
+                  const conversations = document.getElementById("conversations");
+    conversations.innerHTML = ""; 
+
+                const res2 = await fetch("/api/allConvo", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ receiver:rec })
+});
+
+const allConvo = await res2.json();
+
+if (allConvo.success) {
+    const userRes = await fetch("/api/user");
+const userData = await userRes.json();
+const yourUsername = userData.username;
+
+    
+        allConvo.messages.forEach(msg => {
+            const div = document.createElement("div");
+            div.textContent = `${msg.sender}: ${msg.message}`;
+            div.style.padding = "8px";
+            div.style.margin = "5px";
+            div.style.borderRadius = "8px";
+            div.style.color = "white";
+            div.style.background = msg.sender === yourUsername ? "#4CAF50" : "#555";
+            div.style.textAlign = msg.sender === yourUsername ? "right" : "left";
+            conversations.appendChild(div);
+        });
+} else {
+    alert(allConvo.error);
+}
+            }
+        </script>
+    </body>
+</html>
