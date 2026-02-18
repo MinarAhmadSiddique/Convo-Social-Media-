@@ -1,149 +1,404 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Welcome to Convo</title>
-    </head>
+<head>
+    <title>Friends — Convo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-       .tabs {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    background-color: #ffffff;
-    padding: 12px 20px;
-    border-bottom: 1px solid #ddd;
-    font-family: Arial, sans-serif;
-}
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-.tabs a {
-    text-decoration: none;
-    color: #555;
-    font-weight: 600;
-    padding: 8px 14px;
-    border-radius: 6px;
-    transition: background-color 0.3s, color 0.3s;
-}
+        :root {
+            --bg: #0a0a0f;
+            --surface: #13131a;
+            --surface2: #1c1c28;
+            --accent: #7c5cfc;
+            --accent2: #fc5c7c;
+            --text: #f0f0f8;
+            --muted: #6b6b80;
+            --border: rgba(255,255,255,0.07);
+        }
 
-.tabs a:hover {
-    background-color: #4a90e2;
-    color: #ffffff;
-}
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-.tabs a:active {
-    background-color: #357abd;
-    color: #ffffff;
-}
+        body::before {
+            content: '';
+            position: fixed; top: -20%; left: -10%;
+            width: 60vw; height: 60vw; border-radius: 50%;
+            background: radial-gradient(circle, rgba(124,92,252,0.12) 0%, transparent 70%);
+            pointer-events: none; z-index: 0;
+        }
+        body::after {
+            content: '';
+            position: fixed; bottom: -20%; right: -10%;
+            width: 50vw; height: 50vw; border-radius: 50%;
+            background: radial-gradient(circle, rgba(252,92,124,0.08) 0%, transparent 70%);
+            pointer-events: none; z-index: 0;
+        }
 
+        /* NAV */
+        .tabs {
+            position: sticky; top: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(10,10,15,0.85);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            padding: 12px 28px;
+            border-bottom: 1px solid var(--border);
+        }
+        .logo {
+            display: flex; align-items: center; gap: 10px;
+            text-decoration: none; flex-shrink: 0;
+        }
+        .logo-icon {
+            width: 34px; height: 34px; border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 14px rgba(124,92,252,0.45); flex-shrink: 0;
+        }
+        .logo-icon svg { width: 18px; height: 18px; fill: #fff; }
+        .logo-wordmark {
+            font-family: 'Syne', sans-serif; font-weight: 800;
+            font-size: 20px; letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #fff 20%, var(--accent2));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .nav-links { display: flex; align-items: center; gap: 4px; }
+        .nav-links a {
+            text-decoration: none; color: var(--muted);
+            font-family: 'Syne', sans-serif; font-weight: 600; font-size: 12px;
+            letter-spacing: 0.04em; text-transform: uppercase;
+            padding: 8px 16px; border-radius: 100px;
+            transition: all 0.25s ease;
+        }
+        .nav-links a:hover { color: var(--text); background: var(--surface2); }
+        .nav-links a[href="friends.html"] {
+            color: #fff;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+        }
+
+        /* PAGE */
+        .page {
+            position: relative; z-index: 1;
+            max-width: 680px; margin: 0 auto;
+            padding: 60px 24px 80px;
+        }
+
+        /* Header */
+        .welcome-block {
+            margin-bottom: 40px;
+            animation: fadeUp 0.6s ease both;
+        }
+        .welcome-block .label {
+            font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 600;
+            letter-spacing: 0.15em; text-transform: uppercase;
+            color: var(--accent); margin-bottom: 12px;
+        }
+        .welcome-block h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(28px, 5vw, 44px); font-weight: 800; line-height: 1.1;
+            background: linear-gradient(135deg, #fff 30%, var(--muted));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .welcome-block p {
+            color: var(--muted); font-size: 15px; font-weight: 300;
+            margin-top: 10px; line-height: 1.6;
+        }
+
+        /* Section */
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section-label {
+            font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 600;
+            letter-spacing: 0.15em; text-transform: uppercase;
+            color: var(--muted); margin-bottom: 14px;
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        .badge {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: #fff; font-size: 10px; font-weight: 800;
+            border-radius: 100px; padding: 2px 8px;
+            font-family: 'Syne', sans-serif; letter-spacing: 0.05em;
+        }
+
+        /* Cards */
+        .person-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px; padding: 18px 22px;
+            display: flex; align-items: center; gap: 16px;
+            margin-bottom: 10px;
+            transition: border-color 0.25s, transform 0.2s;
+            animation: fadeUp 0.5s ease both;
+        }
+        .person-card:hover {
+            border-color: rgba(124,92,252,0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Request card gets a subtle left accent */
+        .request-card {
+            border-left: 3px solid var(--accent);
+        }
+
+        .person-avatar {
+            width: 44px; height: 44px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Syne', sans-serif; font-weight: 800; font-size: 15px;
+            color: #fff; flex-shrink: 0;
+        }
+
+        .person-info { flex: 1; min-width: 0; }
+        .person-name {
+            font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px;
+            color: var(--text); margin-bottom: 3px;
+        }
+        .person-sub {
+            font-size: 13px; color: var(--muted);
+        }
+
+        /* Accept button */
+        .accept-btn {
+            flex-shrink: 0;
+            font-family: 'Syne', sans-serif; font-weight: 700;
+            font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;
+            color: #fff;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border: none; border-radius: 10px;
+            padding: 9px 18px; cursor: pointer;
+            transition: opacity 0.2s, transform 0.15s;
+            white-space: nowrap;
+        }
+        .accept-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+        .accept-btn:active { transform: translateY(0); }
+
+        /* Friend chip (compact, no button) */
+        .friend-chip {
+            background: rgba(124,92,252,0.08);
+            border: 1px solid rgba(124,92,252,0.18);
+        }
+        .friend-chip .person-avatar {
+            width: 38px; height: 38px; font-size: 13px;
+        }
+        .friend-icon {
+            flex-shrink: 0;
+            font-size: 18px; color: var(--accent);
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center; padding: 40px 20px; color: var(--muted);
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 16px;
+        }
+        .empty-state .emoji { font-size: 32px; margin-bottom: 12px; }
+        .empty-state p { font-size: 14px; }
+
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 32px; left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--surface);
+            border: 1px solid rgba(124,92,252,0.4);
+            border-radius: 12px; padding: 14px 24px;
+            font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600;
+            color: var(--text); opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 999; white-space: nowrap;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
     </style>
-    <body>
-        <div class="tabs" >
+</head>
+<body>
+
+    <nav class="tabs">
+        <a href="/" class="logo">
+            <div class="logo-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 2H4C2.9 2 2 2.9 2 4v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 10H6V10h12v2zm0-3H6V7h12v2z"/>
+                </svg>
+            </div>
+            <span class="logo-wordmark">Convo</span>
+        </a>
+        <div class="nav-links">
             <a href="profile.html">Profile</a>
             <a href="posts.html">Feeds</a>
             <a href="people.html">Discover</a>
             <a href="friends.html">Friends</a>
             <a href="message.html">Message</a>
         </div>
+    </nav>
 
+    <div class="page">
 
-        <div id="friendRequest"></div>
+        <div class="welcome-block">
+            <div class="label">Friends</div>
+            <h1>Your network.</h1>
+            <p>Manage requests and see who you're connected with.</p>
+        </div>
 
-        <h3>Your Friends Checklists</h3>
+        <!-- Friend Requests -->
+        <div class="section" id="requestsSection">
+            <div class="section-label">
+                Pending Requests <span class="badge" id="requestBadge" style="display:none"></span>
+            </div>
+            <div id="friendRequest"></div>
+        </div>
 
-        <div id="friends"></div>
+        <!-- Friends List -->
+        <div class="section">
+            <div class="section-label">Your Friends</div>
+            <div id="friends"></div>
+        </div>
 
-        <script>
+    </div>
 
-            async function acceptFriends(){
-            const container=document.getElementById("friendRequest");
-            container.innerHTML="";
+    <div class="toast" id="toast"></div>
 
-            try{
-                const res=await fetch("/api/friendRequest");
-                const people=await res.json();
+    <script>
+        function showToast(msg) {
+            const toast = document.getElementById("toast");
+            toast.textContent = msg;
+            toast.classList.add("show");
+            setTimeout(() => toast.classList.remove("show"), 3000);
+        }
 
-                people.forEach(u=>
-                    {
-                        const div=document.createElement("div");
-                         div.style.border="1px solid #ccc";
-            div.style.padding="8px";
-            div.style.margin="8px 0";
-            div.style.borderRadius="6px";
-            div.style.display="flex";
-            div.style.justifyContent="space-between";
-            div.style.alignItems="center";
+        function getInitials(name) {
+            return name ? name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) : '?';
+        }
 
-            div.innerHTML=`
-            <span>Hi, My name is '${u.username}'. Let's be friends.</span>
-            <button onclick="acceptRequest(${u.userid},'${u.username}',${u.targetid})">Add to Network</button>
-            `;
-            container.appendChild(div);
-                    }
-                );
-            }catch(e){
-                console.error(e);
-            }
-            }
+        /* ── Friend Requests ── */
+        async function acceptFriends() {
+            const container = document.getElementById("friendRequest");
+            const badge = document.getElementById("requestBadge");
+            container.innerHTML = "";
 
-            async function acceptRequest(userid,username,targetid){
+            try {
+                const res = await fetch("/api/friendRequest");
+                const people = await res.json();
 
-                const res=await fetch("/api/accept",{
-                    method:"POST",
-                    headers:{"Content-Type":"application/json"},
-                    body:JSON.stringify({userid,targetid})
-                });
-
-                const data=await res.json();
-
-                if(data.success){
-                    alert(`You and ${username} are now friends`);
-                    window.location.reload();
-                }else{
-                    alert(data.error);
+                if (people.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="emoji">📭</div>
+                            <p>No pending requests right now.</p>
+                        </div>`;
+                    return;
                 }
 
-            }
+                badge.textContent = people.length;
+                badge.style.display = "inline";
 
-            acceptFriends();
-
-            async function friends(){
-                const container=document.getElementById("friends");
-                container.innerHTML="";
-try{
-                const res=await fetch("/api/friends");
-                const friends=await res.json();
-
-                friends.forEach(u=>{
-                     const div=document.createElement("div");
-                         div.style.border="1px solid #ccc";
-            div.style.padding="8px";
-            div.style.margin="8px 0";
-            div.style.borderRadius="6px";
-            div.style.display="flex";
-            div.style.justifyContent="space-between";
-            div.style.alignItems="center";
-
-        fetch("/api/user")
-            .then(res=>res.json())
-            .then(user=>{
-                if(user.username===u.username){
-             div.innerHTML=`
-            <span>You are friends with '${u.targetname}'.</span>
-            `;
-                }else if(user.username===u.targetname){
-                    div.innerHTML=`
-            <span>You are friends with '${u.username}'.</span>
-            `;
-                }
-            })
-            .catch(err=>console.error(err));
-            
-
-            container.appendChild(div);
+                people.forEach((u, i) => {
+                    const card = document.createElement("div");
+                    card.className = "person-card request-card";
+                    card.style.animationDelay = `${i * 0.05}s`;
+                    card.innerHTML = `
+                        <div class="person-avatar">${getInitials(u.username)}</div>
+                        <div class="person-info">
+                            <div class="person-name">${u.username}</div>
+                            <div class="person-sub">Wants to connect with you</div>
+                        </div>
+                        <button class="accept-btn" onclick="acceptRequest(${u.userid}, '${u.username}', ${u.targetid}, this)">
+                            Accept
+                        </button>
+                    `;
+                    container.appendChild(card);
                 });
-            }catch(e){
+
+            } catch (e) { console.error(e); }
+        }
+
+        async function acceptRequest(userid, username, targetid, btn) {
+            btn.textContent = "…";
+            btn.disabled = true;
+
+            try {
+                const res = await fetch("/api/accept", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ userid, targetid })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    showToast(`You and ${username} are now friends 🎉`);
+                    // Remove the card smoothly and refresh friends list
+                    btn.closest(".person-card").style.opacity = "0";
+                    btn.closest(".person-card").style.transform = "translateX(10px)";
+                    btn.closest(".person-card").style.transition = "all 0.3s ease";
+                    setTimeout(() => { acceptFriends(); friends(); }, 350);
+                } else {
+                    showToast(data.error || "Something went wrong.");
+                    btn.textContent = "Accept";
+                    btn.disabled = false;
+                }
+            } catch (e) {
                 console.error(e);
+                btn.textContent = "Accept";
+                btn.disabled = false;
             }
-            }
-            friends();
-        </script>
-    </body>
+        }
+
+        /* ── Friends List ── */
+        async function friends() {
+            const container = document.getElementById("friends");
+            container.innerHTML = "";
+
+            try {
+                const [friendsRes, userRes] = await Promise.all([
+                    fetch("/api/friends"),
+                    fetch("/api/user")
+                ]);
+                const friendsList = await friendsRes.json();
+                const currentUser = await userRes.json();
+
+                if (friendsList.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="emoji">👋</div>
+                            <p>No friends yet. Head to Discover to find people.</p>
+                        </div>`;
+                    return;
+                }
+
+                friendsList.forEach((u, i) => {
+                    const friendName = currentUser.username === u.username ? u.targetname : u.username;
+                    const card = document.createElement("div");
+                    card.className = "person-card friend-chip";
+                    card.style.animationDelay = `${0.1 + i * 0.05}s`;
+                    card.innerHTML = `
+                        <div class="person-avatar">${getInitials(friendName)}</div>
+                        <div class="person-info">
+                            <div class="person-name">${friendName}</div>
+                            <div class="person-sub">Connected · Convo friend</div>
+                        </div>
+                        <div class="friend-icon">✓</div>
+                    `;
+                    container.appendChild(card);
+                });
+
+            } catch (e) { console.error(e); }
+        }
+
+        acceptFriends();
+        friends();
+    </script>
+
+</body>
 </html>

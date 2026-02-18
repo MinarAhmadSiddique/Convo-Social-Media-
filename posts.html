@@ -1,129 +1,405 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Welcome to Convo</title>
-    </head>
+<head>
+    <title>Feeds — Convo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-       .tabs {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    background-color: #ffffff;
-    padding: 12px 20px;
-    border-bottom: 1px solid #ddd;
-    font-family: Arial, sans-serif;
-}
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-.tabs a {
-    text-decoration: none;
-    color: #555;
-    font-weight: 600;
-    padding: 8px 14px;
-    border-radius: 6px;
-    transition: background-color 0.3s, color 0.3s;
-}
+        :root {
+            --bg: #0a0a0f;
+            --surface: #13131a;
+            --surface2: #1c1c28;
+            --accent: #7c5cfc;
+            --accent2: #fc5c7c;
+            --text: #f0f0f8;
+            --muted: #6b6b80;
+            --border: rgba(255,255,255,0.07);
+        }
 
-.tabs a:hover {
-    background-color: #4a90e2;
-    color: #ffffff;
-}
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-.tabs a:active {
-    background-color: #357abd;
-    color: #ffffff;
-}
-    #statusForm {
-        width: 50%;
-        margin: 30px auto;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
+        body::before {
+            content: '';
+            position: fixed;
+            top: -20%;
+            left: -10%;
+            width: 60vw;
+            height: 60vw;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(124,92,252,0.12) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -20%;
+            right: -10%;
+            width: 50vw;
+            height: 50vw;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(252,92,124,0.08) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
 
-  
-    #statusForm label {
-        font-weight: bold;
-        margin-bottom: 8px;
-        font-size: 16px;
-        align-self: flex-start;
-    }
+        /* ── NAV ── */
+        .tabs {
+            position: sticky; top: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(10,10,15,0.85);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            padding: 12px 28px;
+            border-bottom: 1px solid var(--border);
+        }
 
-   
-    #statusForm textarea {
-        width: 100%;
-        padding: 10px;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        resize: none;
-        margin-bottom: 15px;
-        font-size: 14px;
-        font-family: Arial, sans-serif;
-    }
+        .logo {
+            display: flex; align-items: center; gap: 10px;
+            text-decoration: none; flex-shrink: 0;
+        }
 
-    
-    #statusForm button {
-        padding: 10px 20px;
-        background-color: #4a90e2;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
+        .logo-icon {
+            width: 34px; height: 34px; border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 14px rgba(124,92,252,0.45); flex-shrink: 0;
+        }
 
-    #statusForm button:hover {
-        background-color: #357abd;
-    }
+        .logo-icon svg { width: 18px; height: 18px; fill: #fff; }
 
+        .logo-wordmark {
+            font-family: 'Syne', sans-serif; font-weight: 800;
+            font-size: 20px; letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #fff 20%, var(--accent2));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links { display: flex; align-items: center; gap: 4px; }
+
+        .nav-links a {
+            text-decoration: none; color: var(--muted);
+            font-family: 'Syne', sans-serif; font-weight: 600; font-size: 12px;
+            letter-spacing: 0.04em; text-transform: uppercase;
+            padding: 8px 16px; border-radius: 100px;
+            transition: all 0.25s ease;
+        }
+
+        .nav-links a:hover { color: var(--text); background: var(--surface2); }
+
+        .nav-links a[href="posts.html"] {
+            color: #fff;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+        }
+
+        /* PAGE */
+        .page {
+            position: relative;
+            z-index: 1;
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 60px 24px 80px;
+        }
+
+        /* Header */
+        .welcome-block {
+            margin-bottom: 36px;
+            animation: fadeUp 0.6s ease both;
+        }
+
+        .welcome-block .label {
+            font-family: 'Syne', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+
+        .welcome-block h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(28px, 5vw, 44px);
+            font-weight: 800;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #fff 30%, var(--muted));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .welcome-block p {
+            color: var(--muted);
+            font-size: 15px;
+            font-weight: 300;
+            margin-top: 10px;
+            line-height: 1.6;
+        }
+
+        /* Compose card */
+        .compose-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+            animation: fadeUp 0.6s 0.08s ease both;
+        }
+
+        .compose-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+        }
+
+        .compose-card label {
+            font-family: 'Syne', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--muted);
+            display: block;
+            margin-bottom: 14px;
+        }
+
+        .compose-card textarea {
+            width: 100%;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 400;
+            padding: 16px;
+            resize: none;
+            outline: none;
+            transition: border-color 0.25s;
+            margin-bottom: 14px;
+            line-height: 1.6;
+        }
+
+        .compose-card textarea::placeholder { color: var(--muted); }
+        .compose-card textarea:focus { border-color: var(--accent); }
+
+        .compose-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .char-count {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .compose-card button {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: #fff;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border: none;
+            border-radius: 10px;
+            padding: 11px 24px;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.15s;
+        }
+
+        .compose-card button:hover { opacity: 0.88; transform: translateY(-1px); }
+        .compose-card button:active { transform: translateY(0); }
+
+        /* Feed section */
+        .feed-header {
+            font-family: 'Syne', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 16px;
+            animation: fadeUp 0.6s 0.14s ease both;
+        }
+
+        /* Feed items */
+        #container {
+            display: grid;
+            gap: 12px;
+            animation: fadeUp 0.6s 0.18s ease both;
+        }
+
+        .feed-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px 24px;
+            transition: border-color 0.25s, transform 0.2s;
+        }
+
+        .feed-card:hover {
+            border-color: rgba(124,92,252,0.3);
+            transform: translateY(-2px);
+        }
+
+        .feed-card .feed-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .feed-card .feed-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 13px;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .feed-card .feed-username {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--text);
+        }
+
+        .feed-card .feed-body {
+            font-size: 15px;
+            color: #c0c0d0;
+            line-height: 1.65;
+            padding-left: 48px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--muted);
+        }
+
+        .empty-state .emoji { font-size: 40px; margin-bottom: 16px; }
+        .empty-state p { font-size: 15px; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
     </style>
-    <body>
-        <div class="tabs" >
+</head>
+<body>
+
+    <nav class="tabs">
+        <a href="/" class="logo">
+            <div class="logo-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 2H4C2.9 2 2 2.9 2 4v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 10H6V10h12v2zm0-3H6V7h12v2z"/>
+                </svg>
+            </div>
+            <span class="logo-wordmark">Convo</span>
+        </a>
+        <div class="nav-links">
             <a href="profile.html">Profile</a>
             <a href="posts.html">Feeds</a>
             <a href="people.html">Discover</a>
             <a href="friends.html">Friends</a>
             <a href="message.html">Message</a>
         </div>
+    </nav>
 
-<form action="/auth/post" method="POST" id="statusForm">
-    <label for="status">What's on your mind?</label>
-    <textarea id="status" name="feed" cols="50" rows="8" maxlength="500" placeholder="Write Something..."></textarea>
-    <button type="submit">Post</button>
-</form>
+    <div class="page">
 
-<h3>People started sharing. Join them and spread yours.</h3>
+        <div class="welcome-block">
+            <div class="label">Community Feed</div>
+            <h1>What's happening?</h1>
+            <p>Share something with the Convo community.</p>
+        </div>
 
-<div id="container"></div>
+        <div class="compose-card">
+            <form action="/auth/post" method="POST" id="statusForm">
+                <label for="status">What's on your mind?</label>
+                <textarea id="status" name="feed" rows="4" maxlength="500" placeholder="Write something…"></textarea>
+                <div class="compose-footer">
+                    <span class="char-count"><span id="charCount">0</span> / 500</span>
+                    <button type="submit">Post →</button>
+                </div>
+            </form>
+        </div>
 
-<script>
-    async function Feeds(){
-        const container=document.getElementById("container");
-        container.innerHTML="";
+        <div class="feed-header">Latest Posts</div>
+        <div id="container"></div>
 
-        try{
-        const res=await fetch("/api/feeds");
-        const feeds=await res.json();
+    </div>
 
-        feeds.forEach(f=>{
-            const div=document.createElement("div");
-            div.style.border = "1px solid #ccc";
-            div.style.padding = "8px";
-            div.style.margin = "8px 0";
-            div.style.borderRadius = "6px";
-
-            div.innerHTML=`<strong>${f.username}: </strong>${f.feed}`;
-            container.appendChild(div);
+    <script>
+        // Char counter
+        const textarea = document.getElementById("status");
+        const charCount = document.getElementById("charCount");
+        textarea.addEventListener("input", () => {
+            charCount.textContent = textarea.value.length;
         });
 
-        if(feeds.length===0){
-            container.innerHTML="<p>No Posts Yet. Make one.</p>";
+        // Load feeds
+        async function Feeds() {
+            const container = document.getElementById("container");
+            container.innerHTML = "";
+
+            try {
+                const res = await fetch("/api/feeds");
+                const feeds = await res.json();
+
+                if (feeds.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="emoji">💬</div>
+                            <p>No posts yet. Be the first to share something.</p>
+                        </div>`;
+                    return;
+                }
+
+                feeds.forEach(f => {
+                    const initials = f.username
+                        ? f.username.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
+                        : '?';
+
+                    const div = document.createElement("div");
+                    div.className = "feed-card";
+                    div.innerHTML = `
+                        <div class="feed-meta">
+                            <div class="feed-avatar">${initials}</div>
+                            <div class="feed-username">${f.username}</div>
+                        </div>
+                        <div class="feed-body">${f.feed}</div>
+                    `;
+                    container.appendChild(div);
+                });
+
+            } catch (e) {
+                console.error(e);
+            }
         }
-    }catch(e){
-        console.error(e);
-    }
-    }
-    Feeds();
-</script>
-    </body>
+
+        Feeds();
+    </script>
+
+</body>
 </html>

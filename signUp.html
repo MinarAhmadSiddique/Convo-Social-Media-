@@ -1,100 +1,213 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Convo Sign Up</title>
+    <title>Sign Up — Convo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-       
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #0a0a0f;
+            --surface: #13131a;
+            --surface2: #1c1c28;
+            --accent: #7c5cfc;
+            --accent2: #fc5c7c;
+            --text: #f0f0f8;
+            --muted: #6b6b80;
+            --border: rgba(255,255,255,0.07);
         }
 
         body {
-            background: #f0f2f5;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            height: 100vh;
+            justify-content: center;
+            overflow-x: hidden;
         }
 
-        .container {
-            background: #fff;
-            padding: 40px 50px;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            width: 350px;
+        body::before {
+            content: '';
+            position: fixed; top: -20%; left: -10%;
+            width: 60vw; height: 60vw; border-radius: 50%;
+            background: radial-gradient(circle, rgba(124,92,252,0.14) 0%, transparent 70%);
+            pointer-events: none; z-index: 0;
+        }
+        body::after {
+            content: '';
+            position: fixed; bottom: -20%; right: -10%;
+            width: 50vw; height: 50vw; border-radius: 50%;
+            background: radial-gradient(circle, rgba(252,92,124,0.09) 0%, transparent 70%);
+            pointer-events: none; z-index: 0;
         }
 
-        h3 {
-            text-align: center;
-            margin-bottom: 25px;
-            color: #333;
+        /* Logo */
+        .logo {
+            display: flex; align-items: center; gap: 10px;
+            text-decoration: none; margin-bottom: 40px;
+            position: relative; z-index: 1;
+            animation: fadeUp 0.5s ease both;
         }
 
-        form label {
+        .logo-icon {
+            width: 40px; height: 40px; border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 20px rgba(124,92,252,0.5);
+        }
+
+        .logo-icon svg { width: 22px; height: 22px; fill: #fff; }
+
+        .logo-wordmark {
+            font-family: 'Syne', sans-serif; font-weight: 800;
+            font-size: 24px; letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #fff 20%, var(--accent2));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Card */
+        .card {
+            position: relative; z-index: 1;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px 36px;
+            width: 100%;
+            max-width: 400px;
+            animation: fadeUp 0.6s 0.08s ease both;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0;
+            height: 3px; border-radius: 24px 24px 0 0;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+        }
+
+        .card-header { margin-bottom: 32px; }
+
+        .card-header .label {
+            font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 600;
+            letter-spacing: 0.15em; text-transform: uppercase;
+            color: var(--accent); margin-bottom: 10px;
+        }
+
+        .card-header h1 {
+            font-family: 'Syne', sans-serif; font-weight: 800; font-size: 28px;
+            line-height: 1.15;
+            background: linear-gradient(135deg, #fff 30%, var(--muted));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-header p {
+            color: var(--muted); font-size: 14px; font-weight: 300;
+            margin-top: 8px; line-height: 1.6;
+        }
+
+        /* Form fields */
+        .field { margin-bottom: 16px; }
+
+        .field label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
+            font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 600;
+            letter-spacing: 0.08em; text-transform: uppercase;
+            color: var(--muted); margin-bottom: 8px;
         }
 
-        form input {
+        .field input {
             width: 100%;
-            padding: 10px 12px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            transition: 0.3s;
-        }
-
-        form input:focus {
-            border-color: #4a90e2;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif; font-size: 15px;
+            padding: 14px 16px;
             outline: none;
+            transition: border-color 0.25s;
         }
 
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #4a90e2;
-            border: none;
-            color: white;
-            font-weight: bold;
-            font-size: 16px;
-            border-radius: 8px;
+        .field input::placeholder { color: var(--muted); }
+        .field input:focus { border-color: var(--accent); }
+
+        /* Submit button */
+        .submit-btn {
+            width: 100%; margin-top: 8px;
+            font-family: 'Syne', sans-serif; font-weight: 700;
+            font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase;
+            color: #fff;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border: none; border-radius: 12px;
+            padding: 15px;
             cursor: pointer;
-            transition: 0.3s;
+            transition: opacity 0.2s, transform 0.15s;
         }
 
-        button:hover {
-            background-color: #357abd;
-        }
+        .submit-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+        .submit-btn:active { transform: translateY(0); }
 
+        /* Note */
         .note {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 14px;
-            color: #888;
+            text-align: center; margin-top: 24px;
+            font-size: 13px; color: var(--muted);
+        }
+
+        .note a {
+            color: var(--accent); text-decoration: none;
+            font-family: 'Syne', sans-serif; font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .note a:hover { color: var(--accent2); }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h3>Sign Up for Convo</h3>
+
+    <a href="/" class="logo">
+        <div class="logo-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 2H4C2.9 2 2 2.9 2 4v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 10H6V10h12v2zm0-3H6V7h12v2z"/>
+            </svg>
+        </div>
+        <span class="logo-wordmark">Convo</span>
+    </a>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="label">Create account</div>
+            <h1>Join Convo.</h1>
+            <p>Start connecting with people. It only takes a second.</p>
+        </div>
+
         <form action="/auth/register" method="POST">
-            <label>Username:</label>
-            <input type="text" maxlength="12" name="username" placeholder="Enter username">
-
-            <label>E-mail:</label>
-            <input type="email" maxlength="40" name="email" placeholder="Enter email">
-
-            <label>Password:</label>
-            <input type="password" maxlength="15" name="password" placeholder="Enter password">
-
-            <button type="submit">Submit</button>
+            <div class="field">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" maxlength="12" placeholder="Choose a username">
+            </div>
+            <div class="field">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" maxlength="40" placeholder="Enter your email">
+            </div>
+            <div class="field">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" maxlength="15" placeholder="Create a password">
+            </div>
+            <button type="submit" class="submit-btn">Create Account →</button>
         </form>
-        <p class="note">Welcome to Convo! Join the conversation now.</p>
+
+        <p class="note">
+            Already have an account? <a href="login.html">Sign In</a>
+        </p>
     </div>
+
 </body>
 </html>

@@ -1,168 +1,492 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Welcome to Convo</title>
-    </head>
+<head>
+    <title>Message — Convo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-       .tabs {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    background-color: #ffffff;
-    padding: 12px 20px;
-    border-bottom: 1px solid #ddd;
-    font-family: Arial, sans-serif;
-}
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-.tabs a {
-    text-decoration: none;
-    color: #555;
-    font-weight: 600;
-    padding: 8px 14px;
-    border-radius: 6px;
-    transition: background-color 0.3s, color 0.3s;
-}
+        :root {
+            --bg: #0a0a0f;
+            --surface: #13131a;
+            --surface2: #1c1c28;
+            --accent: #7c5cfc;
+            --accent2: #fc5c7c;
+            --text: #f0f0f8;
+            --muted: #6b6b80;
+            --border: rgba(255,255,255,0.07);
+        }
 
-.tabs a:hover {
-    background-color: #4a90e2;
-    color: #ffffff;
-}
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-.tabs a:active {
-    background-color: #357abd;
-    color: #ffffff;
-}
+        body::before {
+            content: '';
+            position: fixed; top: -20%; left: -10%;
+            width: 60vw; height: 60vw; border-radius: 50%;
+            background: radial-gradient(circle, rgba(124,92,252,0.12) 0%, transparent 70%);
+            pointer-events: none; z-index: 0;
+        }
+        body::after {
+            content: '';
+            position: fixed; bottom: -20%; right: -10%;
+            width: 50vw; height: 50vw; border-radius: 50%;
+            background: radial-gradient(circle, rgba(252,92,124,0.08) 0%, transparent 70%);
+            pointer-events: none; z-index: 0;
+        }
 
+        /* NAV */
+        .tabs {
+            position: sticky; top: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(10,10,15,0.85);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            padding: 12px 28px;
+            border-bottom: 1px solid var(--border);
+        }
+        .logo {
+            display: flex; align-items: center; gap: 10px;
+            text-decoration: none; flex-shrink: 0;
+        }
+        .logo-icon {
+            width: 34px; height: 34px; border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 14px rgba(124,92,252,0.45); flex-shrink: 0;
+        }
+        .logo-icon svg { width: 18px; height: 18px; fill: #fff; }
+        .logo-wordmark {
+            font-family: 'Syne', sans-serif; font-weight: 800;
+            font-size: 20px; letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #fff 20%, var(--accent2));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .nav-links { display: flex; align-items: center; gap: 4px; }
+        .nav-links a {
+            text-decoration: none; color: var(--muted);
+            font-family: 'Syne', sans-serif; font-weight: 600; font-size: 12px;
+            letter-spacing: 0.04em; text-transform: uppercase;
+            padding: 8px 16px; border-radius: 100px;
+            transition: all 0.25s ease;
+        }
+        .nav-links a:hover { color: var(--text); background: var(--surface2); }
+        .nav-links a[href="message.html"] {
+            color: #fff;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+        }
+
+        /* ── FRIENDS LIST VIEW ── */
+        .page {
+            position: relative; z-index: 1;
+            max-width: 680px; margin: 0 auto;
+            padding: 60px 24px 80px;
+        }
+
+        .welcome-block {
+            margin-bottom: 36px;
+            animation: fadeUp 0.6s ease both;
+        }
+        .welcome-block .label {
+            font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 600;
+            letter-spacing: 0.15em; text-transform: uppercase;
+            color: var(--accent); margin-bottom: 12px;
+        }
+        .welcome-block h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(28px, 5vw, 44px); font-weight: 800; line-height: 1.1;
+            background: linear-gradient(135deg, #fff 30%, var(--muted));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .welcome-block p {
+            color: var(--muted); font-size: 15px; font-weight: 300;
+            margin-top: 10px; line-height: 1.6;
+        }
+
+        .section-label {
+            font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 600;
+            letter-spacing: 0.15em; text-transform: uppercase;
+            color: var(--muted); margin-bottom: 14px;
+            animation: fadeUp 0.6s 0.08s ease both;
+        }
+
+        #friendsList { animation: fadeUp 0.6s 0.14s ease both; }
+
+        .friend-row {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px; padding: 18px 22px;
+            display: flex; align-items: center; gap: 16px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: border-color 0.25s, transform 0.2s, background 0.2s;
+        }
+        .friend-row:hover {
+            border-color: rgba(124,92,252,0.35);
+            background: #181824;
+            transform: translateY(-2px);
+        }
+
+        .friend-avatar {
+            width: 44px; height: 44px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Syne', sans-serif; font-weight: 800; font-size: 15px;
+            color: #fff; flex-shrink: 0;
+        }
+
+        .friend-info { flex: 1; }
+        .friend-name {
+            font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px;
+            color: var(--text); margin-bottom: 3px;
+        }
+        .friend-hint { font-size: 13px; color: var(--muted); }
+
+        .msg-arrow { color: var(--muted); font-size: 18px; }
+
+        /* ── CHAT VIEW ── */
+        .chat-view {
+            display: none;
+            position: fixed; inset: 0; z-index: 200;
+            background: var(--bg);
+            flex-direction: column;
+        }
+        .chat-view.active { display: flex; }
+
+        /* Chat header */
+        .chat-header {
+            display: flex; align-items: center; gap: 14px;
+            padding: 16px 24px;
+            background: rgba(10,10,15,0.9);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .back-btn {
+            background: var(--surface2); border: 1px solid var(--border);
+            color: var(--text); border-radius: 10px;
+            width: 36px; height: 36px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; flex-shrink: 0;
+            transition: background 0.2s;
+        }
+        .back-btn:hover { background: rgba(124,92,252,0.2); }
+
+        .chat-avatar {
+            width: 38px; height: 38px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Syne', sans-serif; font-weight: 800; font-size: 13px;
+            color: #fff; flex-shrink: 0;
+        }
+
+        .chat-header-info { flex: 1; }
+        .chat-header-name {
+            font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px;
+            color: var(--text);
+        }
+        .chat-header-status { font-size: 12px; color: var(--accent); }
+
+        /* Messages scroll area */
+        #conversations {
+            flex: 1; overflow-y: auto;
+            padding: 24px 20px; display: flex;
+            flex-direction: column; gap: 10px;
+        }
+        #conversations::-webkit-scrollbar { width: 4px; }
+        #conversations::-webkit-scrollbar-track { background: transparent; }
+        #conversations::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 4px; }
+
+        .msg-bubble {
+            max-width: 72%; padding: 12px 16px;
+            border-radius: 18px; font-size: 14px; line-height: 1.55;
+            animation: fadeUp 0.25s ease both;
+        }
+        .msg-bubble.mine {
+            align-self: flex-end;
+            background: linear-gradient(135deg, var(--accent), #6a4ce0);
+            color: #fff; border-bottom-right-radius: 4px;
+        }
+        .msg-bubble.theirs {
+            align-self: flex-start;
+            background: var(--surface2); color: var(--text);
+            border: 1px solid var(--border);
+            border-bottom-left-radius: 4px;
+        }
+        .msg-sender {
+            font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
+            letter-spacing: 0.08em; text-transform: uppercase;
+            margin-bottom: 5px; opacity: 0.65;
+        }
+
+        /* Compose bar */
+        .compose-bar {
+            display: flex; align-items: flex-end; gap: 12px;
+            padding: 16px 20px;
+            background: rgba(10,10,15,0.95);
+            border-top: 1px solid var(--border);
+            backdrop-filter: blur(20px);
+            flex-shrink: 0;
+        }
+        #msg {
+            flex: 1;
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 14px; color: var(--text);
+            font-family: 'DM Sans', sans-serif; font-size: 14px;
+            padding: 12px 16px; resize: none; outline: none;
+            line-height: 1.5; max-height: 120px;
+            transition: border-color 0.25s;
+        }
+        #msg::placeholder { color: var(--muted); }
+        #msg:focus { border-color: var(--accent); }
+
+        .send-btn {
+            width: 44px; height: 44px; flex-shrink: 0;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border: none; border-radius: 12px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; transition: opacity 0.2s, transform 0.15s;
+        }
+        .send-btn:hover { opacity: 0.85; transform: scale(1.05); }
+        .send-btn:active { transform: scale(0.97); }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center; padding: 48px 20px;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 16px; color: var(--muted);
+        }
+        .empty-state .emoji { font-size: 32px; margin-bottom: 12px; }
+        .empty-state p { font-size: 14px; }
+
+        .empty-chat {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            color: var(--muted); gap: 12px;
+        }
+        .empty-chat .emoji { font-size: 36px; }
+        .empty-chat p { font-size: 14px; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
     </style>
-    <body>
-        <div class="tabs" >
+</head>
+<body>
+
+    <nav class="tabs">
+        <a href="/" class="logo">
+            <div class="logo-icon">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 2H4C2.9 2 2 2.9 2 4v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 10H6V10h12v2zm0-3H6V7h12v2z"/>
+                </svg>
+            </div>
+            <span class="logo-wordmark">Convo</span>
+        </a>
+        <div class="nav-links">
             <a href="profile.html">Profile</a>
             <a href="posts.html">Feeds</a>
             <a href="people.html">Discover</a>
             <a href="friends.html">Friends</a>
             <a href="message.html">Message</a>
         </div>
+    </nav>
 
-
-        <div id="container"></div>
-
-        <script>
-          
-               async function friends(){
-                const container=document.getElementById("container");
-                container.innerHTML="";
-try{
-                const res=await fetch("/api/friends");
-                const friends=await res.json();
-
-                friends.forEach(u=>{
-                     const div=document.createElement("div");
-                         div.style.border="1px solid #ccc";
-            div.style.padding="8px";
-            div.style.margin="8px 0";
-            div.style.borderRadius="6px";
-            div.style.display="flex";
-            div.style.justifyContent="space-between";
-            div.style.alignItems="center";
-
-        fetch("/api/user")
-            .then(res=>res.json())
-            .then(user=>{
-                if(user.username===u.username){
-             div.innerHTML=`
-            <span>'${u.targetname}' is your friend.</span>
-            <button onclick="Message('${u.targetname}')">Message</button>
-            `;
-                }else if(user.username===u.targetname){
-                    div.innerHTML=`
-            <span>'${u.username}' is your friend.</span>
-            <button onclick="Message('${u.username}')">Message</button>
-            `;
-                }
-            })
-            .catch(err=>console.error(err));
-            
-
-            container.appendChild(div);
-                });
-            }catch(e){
-                console.error(e);
-            }
-            }
-            friends();
-
-            async function Message(receiver){
-
-  const container = document.getElementById("container");
-  container.innerHTML = "";
-
-  container.innerHTML = `
-    <div id="conversations"></div>
-    <div style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);color:white;padding:20px;border-radius:50px;">
-    <textarea id="msg" cols="40" rows="6"></textarea>
-    <button onclick="sendMessage('${receiver}')">Send</button>
+    <!-- Friends list view -->
+    <div class="page" id="friendsView">
+        <div class="welcome-block">
+            <div class="label">Messages</div>
+            <h1>Your conversations.</h1>
+            <p>Pick a friend to start or continue a chat.</p>
+        </div>
+        <div class="section-label">Friends</div>
+        <div id="friendsList"></div>
     </div>
-  `;
 
-  getMess(receiver);
+    <!-- Chat view (full-screen overlay) -->
+    <div class="chat-view" id="chatView">
+        <div class="chat-header">
+            <button class="back-btn" onclick="goBack()">←</button>
+            <div class="chat-avatar" id="chatAvatar"></div>
+            <div class="chat-header-info">
+                <div class="chat-header-name" id="chatName"></div>
+                <div class="chat-header-status">Online</div>
+            </div>
+        </div>
+        <div id="conversations"></div>
+        <div class="compose-bar">
+            <textarea id="msg" rows="1" placeholder="Type a message…"
+                onkeydown="handleKey(event)"></textarea>
+            <button class="send-btn" id="sendBtn" onclick="sendMessage()">↑</button>
+        </div>
+    </div>
+
+    <script>
+        let currentReceiver = null;
+        let currentUser = null;
+        let pollInterval = null;
+
+        function getInitials(name) {
+            return name ? name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) : '?';
+        }
+
+        // Auto-grow textarea
+        const msgInput = document.getElementById("msg");
+        msgInput.addEventListener("input", () => {
+            msgInput.style.height = "auto";
+            msgInput.style.height = Math.min(msgInput.scrollHeight, 120) + "px";
+        });
+
+        function handleKey(e) {
+            if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
             }
+        }
 
-            async function sendMessage(rec){
-                const message=document.getElementById("msg").value;
-                const conversations=document.getElementById("conversations");
-                const receiver=rec;
+        /* ── Load Friends ── */
+        async function friends() {
+            const container = document.getElementById("friendsList");
+            container.innerHTML = "";
 
-                const res=await fetch("/api/message",{
-                    method:"POST",
-                    headers:{"Content-Type":"application/json"},
-                    body:JSON.stringify({receiver,message})
-                });
+            try {
+                const [friendsRes, userRes] = await Promise.all([
+                    fetch("/api/friends"),
+                    fetch("/api/user")
+                ]);
+                const friendsList = await friendsRes.json();
+                currentUser = await userRes.json();
 
-                  const data=await res.json();
-
-                if(data.success){
-                
-                }else{
-                    alert(data.error);
+                if (friendsList.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="emoji">💬</div>
+                            <p>No friends yet. Head to Discover to connect with people.</p>
+                        </div>`;
+                    return;
                 }
 
-                getMess(rec);
+                friendsList.forEach((u, i) => {
+                    const friendName = currentUser.username === u.username ? u.targetname : u.username;
+                    const row = document.createElement("div");
+                    row.className = "friend-row";
+                    row.style.animationDelay = `${i * 0.05}s`;
+                    row.innerHTML = `
+                        <div class="friend-avatar">${getInitials(friendName)}</div>
+                        <div class="friend-info">
+                            <div class="friend-name">${friendName}</div>
+                            <div class="friend-hint">Tap to message</div>
+                        </div>
+                        <div class="msg-arrow">→</div>
+                    `;
+                    row.onclick = () => openChat(friendName);
+                    container.appendChild(row);
+                });
 
-            }
+            } catch (e) { console.error(e); }
+        }
 
-            async function getMess(rec) {
-                  const conversations = document.getElementById("conversations");
-    conversations.innerHTML = ""; 
+        /* ── Open Chat ── */
+        function openChat(receiver) {
+            currentReceiver = receiver;
+            document.getElementById("chatName").textContent = receiver;
+            document.getElementById("chatAvatar").textContent = getInitials(receiver);
+            document.getElementById("friendsView").style.display = "none";
+            document.getElementById("chatView").classList.add("active");
+            getMess(receiver);
+            // Poll for new messages every 5s
+            clearInterval(pollInterval);
+            pollInterval = setInterval(() => getMess(receiver), 5000);
+        }
 
-                const res2 = await fetch("/api/allConvo", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ receiver:rec })
-});
+        /* ── Back to friends list ── */
+        function goBack() {
+            clearInterval(pollInterval);
+            currentReceiver = null;
+            document.getElementById("chatView").classList.remove("active");
+            document.getElementById("friendsView").style.display = "";
+        }
 
-const allConvo = await res2.json();
+        /* ── Send Message ── */
+        async function sendMessage() {
+            const message = msgInput.value.trim();
+            if (!message || !currentReceiver) return;
 
-if (allConvo.success) {
-    const userRes = await fetch("/api/user");
-const userData = await userRes.json();
-const yourUsername = userData.username;
+            msgInput.value = "";
+            msgInput.style.height = "auto";
 
-    
-        allConvo.messages.forEach(msg => {
-            const div = document.createElement("div");
-            div.textContent = `${msg.sender}: ${msg.message}`;
-            div.style.padding = "8px";
-            div.style.margin = "5px";
-            div.style.borderRadius = "8px";
-            div.style.color = "white";
-            div.style.background = msg.sender === yourUsername ? "#4CAF50" : "#555";
-            div.style.textAlign = msg.sender === yourUsername ? "right" : "left";
-            conversations.appendChild(div);
-        });
-} else {
-    alert(allConvo.error);
-}
-            }
-        </script>
-    </body>
+            try {
+                const res = await fetch("/api/message", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ receiver: currentReceiver, message })
+                });
+                const data = await res.json();
+                if (!data.success) console.error(data.error);
+            } catch (e) { console.error(e); }
+
+            getMess(currentReceiver);
+        }
+
+        /* ── Get Messages ── */
+        async function getMess(rec) {
+            const conversations = document.getElementById("conversations");
+
+            try {
+                const res = await fetch("/api/allConvo", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ receiver: rec })
+                });
+                const allConvo = await res.json();
+
+                if (allConvo.success) {
+                    if (!currentUser) {
+                        const userRes = await fetch("/api/user");
+                        currentUser = await userRes.json();
+                    }
+                    const me = currentUser.username;
+                    const wasAtBottom = conversations.scrollHeight - conversations.scrollTop <= conversations.clientHeight + 40;
+
+                    conversations.innerHTML = "";
+
+                    if (allConvo.messages.length === 0) {
+                        conversations.innerHTML = `
+                            <div class="empty-chat">
+                                <div class="emoji">👋</div>
+                                <p>Say hi to ${rec}!</p>
+                            </div>`;
+                        return;
+                    }
+
+                    allConvo.messages.forEach(msg => {
+                        const isMine = msg.sender === me;
+                        const bubble = document.createElement("div");
+                        bubble.className = `msg-bubble ${isMine ? "mine" : "theirs"}`;
+                        bubble.innerHTML = `
+                            ${!isMine ? `<div class="msg-sender">${msg.sender}</div>` : ""}
+                            ${msg.message}
+                        `;
+                        conversations.appendChild(bubble);
+                    });
+
+                    // Auto-scroll to bottom if user was already there
+                    if (wasAtBottom) {
+                        conversations.scrollTop = conversations.scrollHeight;
+                    }
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        friends();
+    </script>
+
+</body>
 </html>
